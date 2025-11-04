@@ -5,7 +5,7 @@ import "element-plus/dist/index.css";
 
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import components from './components'
-
+import './styles/index.scss'
 const app = createApp(App);
 
 //用来获取当前环境
