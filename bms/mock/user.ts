@@ -5,7 +5,7 @@ const mockUsers = [
   {
     id: 1,
     username: "admin",
-    password: "admin123",
+    password: "111111",
     role: "admin",
     name: "超级管理员",
     age: 30,
@@ -15,7 +15,7 @@ const mockUsers = [
   {
     id: 2,
     username: "editor",
-    password: "editor123",
+    password: "111111",
     role: "editor",
     name: "内容编辑",
     age: 25,
@@ -25,7 +25,7 @@ const mockUsers = [
   {
     id: 3,
     username: "guest",
-    password: "guest123",
+    password: "111111",
     role: "guest",
     name: "访客用户",
     age: 20,
@@ -81,8 +81,8 @@ function createUserInfoApiMock(): MockMethod {
   return {
     url: "/api/user/info",
     method: "get",
-    response: (request: { headers: { Authorization: string } }) => {
-      const token = request.headers?.Authorization;
+    response: (request: { headers: { token: string } }) => {
+      const token = request.headers?.token;
       const user = mockUsers.find((u) => u.token === token);
 
       if (user) {

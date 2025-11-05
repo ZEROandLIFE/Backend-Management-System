@@ -2,25 +2,35 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { viteMockServe } from "vite-plugin-mock";
 import path from "path";
-// https://vite.dev/config/
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
+
 export default defineConfig({
   plugins: [
     vue(),
     viteMockServe({
-      mockPath: "mock", // mock 文件目录
+      mockPath: "mock",
       enable: true,
+    }),
+    // 配置 Element Plus 自动导入
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
     }),
   ],
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "@/styles/vars.scss" as *;`, // 全局注入变量
+        additionalData: `@use "@/styles/vars.scss" as *;`,
       },
     },
   },
   resolve: {
     alias: {
-      "@": path.resolve("./src"), // 确保 @ 路径正确
+      "@": path.resolve(__dirname, "src"),
     },
   },
 });

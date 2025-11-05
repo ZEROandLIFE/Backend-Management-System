@@ -17,6 +17,7 @@ request.interceptors.response.use(
   (response) => {
     //成功的回调
     //可以简化数据，比如返回来的重要信息在data里面，就可以return response.data
+    // console.log(response);
     return response.data;
   },
   (error) => {
