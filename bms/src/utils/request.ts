@@ -1,6 +1,8 @@
 //进行axios二次封装：使用请求与响应拦截器
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import { useUserStore } from "../store/modules/user";
+const userStore=useUserStore()
 //第一步：利用axios对象的create方法，去创建axios实例（其他的配置：基础路径，超时响应时间）
 let request = axios.create({
   baseURL: import.meta.env.VITE_APP_BASE_API, //基础路径上会自带'/api'
@@ -10,6 +12,8 @@ let request = axios.create({
 request.interceptors.request.use((config) => {
   //返回配置对象
   //config配置对象，headers属性请求头，经常给服务器端携带公共参数
+  if (userStore.token)
+    config.headers.token = userStore.token;
   return config;
 });
 //第三步：响应拦截器
@@ -18,6 +22,7 @@ request.interceptors.response.use(
     //成功的回调
     //可以简化数据，比如返回来的重要信息在data里面，就可以return response.data
     // console.log(response);
+
     return response.data;
   },
   (error) => {

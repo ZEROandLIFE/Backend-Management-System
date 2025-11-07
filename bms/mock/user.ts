@@ -9,7 +9,8 @@ const mockUsers = [
     role: "admin",
     name: "超级管理员",
     age: 30,
-    avatar: "https://example.com/avatar-admin.jpg",
+    avatar:
+      "https://ts3.tc.mm.bing.net/th/id/OIP-C.ggsZdTRvkxgQHIv-pbJU0AHaHa?rs=1&pid=ImgDetMain&o=7&rm=3",
     token: "admin-token-123456",
   },
   {
@@ -19,7 +20,8 @@ const mockUsers = [
     role: "editor",
     name: "内容编辑",
     age: 25,
-    avatar: "https://example.com/avatar-editor.jpg",
+    avatar:
+      "https://ts3.tc.mm.bing.net/th/id/OIP-C.6WS2KSgxdGD_QoMiARkyQAHaGb?rs=1&pid=ImgDetMain&o=7&rm=3",
     token: "editor-token-789012",
   },
   {
@@ -29,7 +31,8 @@ const mockUsers = [
     role: "guest",
     name: "访客用户",
     age: 20,
-    avatar: "https://example.com/avatar-guest.jpg",
+    avatar:
+      "https://ts3.tc.mm.bing.net/th/id/OIP-C.cQlLJHdf4YoKcqxA6hfxwQAAAA?rs=1&pid=ImgDetMain&o=7&rm=3",
     token: "guest-token-345678",
   },
 ];

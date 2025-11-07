@@ -1,8 +1,10 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import NotFound from "../views/404/index.vue";
 import Login from "../views/login/index.vue";
-import Home from "../views/home/index.vue";
-import Layout from "../layout/index.vue"
+
+import Layout from "../layout/index.vue";
+import { layoutrouter } from "./layoutrouter";
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -11,18 +13,14 @@ const router = createRouter({
       name: "layout",
       component: Layout,
       meta: { title: "" },
+      redirect:'/home',
+      children: layoutrouter,
     },
     {
       path: "/login",
       name: "login",
       component: Login,
       meta: { title: "登录界面" },
-    },
-    {
-      path: "/home",
-      name: "home",
-      component: Home,
-      meta: { title: "主界面" },
     },
     {
       path: "/404",

@@ -2,34 +2,77 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { reqLogin, reqUserInfo } from "../../api/user/index";
 import { useRouter } from "vue-router";
-import { type loginForm, type userResponse } from "../../api/user/type";
-import { ElMessage, ElNotification } from "element-plus";
+import {
+  type loginForm,
+  type userResponse,
+  type userData,
+} from "../../api/user/type";
+import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 
 export const useUserStore = defineStore("user", () => {
   const router = useRouter();
   const token = ref<string | null>(localStorage.getItem("token"));
-  const userInfo = ref<userResponse | null>(null);
+  const userData = ref<userData | null>(
+    // 初始化时尝试从 localStorage 读取 userData
+    localStorage.getItem("userData")
+      ? JSON.parse(localStorage.getItem("userData")!)
+      : null
+  );
 
   const login = async (form: loginForm) => {
     const res: userResponse = await reqLogin(form);
-    if (res.code == 200 && res.data) {
+    if (res.code === 200 && res.data) {
+      // 存储 token 和 userData
       token.value = res.data.token;
+      userData.value = res.data;
+
+      // 存入 localStorage
       localStorage.setItem("token", token.value);
+      localStorage.setItem("userData", JSON.stringify(userData.value));
+
       return "登录成功";
     } else {
       return Promise.reject(new Error(res.message));
     }
   };
-  const check = () => {
-    console.log("进来了");
 
+  const quit = async () => {
+    try {
+      await ElMessageBox.confirm("确定要退出登录吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      });
+
+      // 清空 localStorage 和状态
+      localStorage.removeItem("token");
+      localStorage.removeItem("userData");
+      token.value = null;
+      userData.value = null;
+
+      ElMessage({
+        type: "success",
+        message: "退出登录成功",
+      });
+
+      router.push("/login");
+    } catch (error) {
+      ElMessage({
+        type: "info",
+        message: "已取消退出",
+      });
+    }
+  };
+
+  const check = () => {
     if (token.value === null) {
       ElNotification({
         type: "error",
         message: "还没有登录，请先登录",
-      });router.push("/login");
-     
+      });
+      router.push("/login");
     }
   };
-  return { token, userInfo, login, check };
+
+  return { token, userData, login, check, quit };
 });

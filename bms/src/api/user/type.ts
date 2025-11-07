@@ -17,3 +17,11 @@ export interface userResponse {
 
   } | null;
 }
+export interface userData {
+  id: number;
+  username: string;
+  role: string;
+  name: string;
+  avatar: string;
+  token: string;
+}
