@@ -12,6 +12,7 @@ import { ElMessage, ElNotification, ElMessageBox } from "element-plus";
 export const useUserStore = defineStore("user", () => {
   const router = useRouter();
   const token = ref<string | null>(localStorage.getItem("token"));
+  const theme = ref<string>(localStorage.getItem("theme") || "light");
   const userData = ref<userData | null>(
     // 初始化时尝试从 localStorage 读取 userData
     localStorage.getItem("userData")
@@ -55,7 +56,6 @@ export const useUserStore = defineStore("user", () => {
         message: "退出登录成功",
       });
 
-      router.push("/login");
     } catch (error) {
       ElMessage({
         type: "info",
@@ -65,14 +65,9 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const check = () => {
-    if (token.value === null) {
-      ElNotification({
-        type: "error",
-        message: "还没有登录，请先登录",
-      });
-      router.push("/login");
-    }
+    if (token.value === null) return false;
+    else return true;
   };
 
-  return { token, userData, login, check, quit };
+  return { token, userData, login, check, quit ,theme};
 });

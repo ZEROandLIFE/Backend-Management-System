@@ -5,6 +5,7 @@ import './styles/index.scss'
 import router from "./router"; // 导入路由配置
 import pinia from './store/index';
 import "element-plus/dist/index.css";
+import "nprogress/nprogress.css";
 const app = createApp(App);
 
 //用来获取当前环境
@@ -12,4 +13,6 @@ const app = createApp(App);
 app.use(router);
 app.use(components);
 app.use(pinia)
+
+
 app.mount("#app");

@@ -17,11 +17,11 @@
             <el-icon><Refresh /></el-icon>
             切换主题
           </el-button>
-          
+
           <!-- 用户下拉菜单 -->
           <el-dropdown @command="handleCommand" class="user-dropdown">
             <span class="user-info">
-              <img :src="userData?.avatar" alt="头像" class="user-avatar">
+              <img :src="userData?.avatar" alt="头像" class="user-avatar" />
               <span class="username">{{ userData?.username }}</span>
               <el-icon><ArrowDown /></el-icon>
             </span>
@@ -81,7 +81,9 @@
             </template>
             <el-menu-item index="/product/list">商品列表</el-menu-item>
             <el-menu-item index="/product/category">商品分类</el-menu-item>
-            <el-menu-item index="/product/brand">品牌管理</el-menu-item>
+            <el-menu-item index="/brand"
+              ><el-icon><Goods /></el-icon>品牌管理</el-menu-item
+            >
           </el-sub-menu>
         </el-menu>
       </aside>
@@ -116,12 +118,13 @@
     Switch,
     FullScreen,
     ArrowDown,
-    SwitchButton
+    SwitchButton,
+    Goods,
   } from "@element-plus/icons-vue";
   import { useUserStore } from "../store/modules/user";
   import { useRouter } from "vue-router";
-  import { ElButton, ElMessage } from "element-plus";
-
+  import { ElButton } from "element-plus";
+  const userStore = useUserStore();
   const $route = useRoute();
 
   // 菜单折叠状态
@@ -203,20 +206,20 @@
   const currentTheme = computed(() => (isDark.value ? "dark" : "light"));
   const toggleTheme = () => {
     isDark.value = !isDark.value;
+    userStore.theme = isDark.value ? "dark" : "light";
     localStorage.setItem("theme", isDark.value ? "dark" : "light");
   };
 
   let useStore = useUserStore();
   const router = useRouter();
-  
+
   // 处理下拉菜单命令
   const handleCommand = (command: string) => {
-    if (command === 'logout') {
+    if (command === "logout") {
       useStore.quit();
     }
   };
 
-  useStore.check();
   const userData = useStore.userData;
 </script>
 
@@ -259,7 +262,7 @@
   /* 用户下拉菜单样式 */
   .user-dropdown {
     cursor: pointer;
-    
+
     .user-info {
       display: flex;
       align-items: center;
@@ -267,7 +270,7 @@
       padding: 8px 12px;
       // border-radius: 4px;
       transition: background-color 0.3s;
-      
+
       &:hover {
         background-color: rgba(0, 0, 0, 0.04);
       }
@@ -283,7 +286,6 @@
     .username {
       font-size: 14px;
       font-weight: 500;
-      
     }
   }
 
@@ -314,9 +316,12 @@
 
     .content {
       padding: 20px;
+      margin: auto;
       border-radius: 4px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
+      height: 90%;
+      width: 95%;
     }
   }
 
@@ -337,15 +342,15 @@
       color: white;
     }
 
-     .user-dropdown {
-    .user-info:hover {
-      background-color: rgba(255, 255, 255, 0.1);
+    .user-dropdown {
+      .user-info:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .username {
+        color: #{$active-text-color-dark};
+      }
     }
-    
-    .username {
-      color: #{$active-text-color-dark};
-    }
-  }
 
     .sidebar {
       background-color: #{$left-background-dark};

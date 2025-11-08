@@ -17,6 +17,7 @@
               v-model="form.username"
               :prefix-icon="User"
               placeholder="请输入账号"
+              clearable
             />
           </el-form-item>
           <el-form-item label="登录密码" class="loginInput" prop="password">
@@ -26,6 +27,7 @@
               :prefix-icon="Lock"
               show-password
               placeholder="请输入密码"
+              clearable
             />
           </el-form-item>
           <el-form-item>
@@ -48,14 +50,15 @@
   import { reactive, ref } from "vue";
   import { useUserStore } from "../../store/modules/user";
   import { useRouter } from "vue-router";
-  import { ElNotification } from "element-plus";
+  import { ElNotification} from "element-plus";
 let useStore = useUserStore();
 const router = useRouter();
   let form = reactive({ username: "", password: "" });
  
   let loading = ref(false);
-  let loginform = ref();
-const validatorPassword = (rule:any, value: string, callback: any) => {
+let loginform = ref();
+
+const validatorPassword = (_rule:any, value: string, callback: any) => {
     //rule：即为校验规则对象
     //value：即为表单元素文本内容
     //函数：如果符合条件cal1Back放行
@@ -71,7 +74,7 @@ const validatorPassword = (rule:any, value: string, callback: any) => {
       callback(new Error('密码长度不能大于15'))
     }
 };
-  const validatorUsername = (rule:any, value: string, callback: any) => {
+  const validatorUsername = (_rule:any, value: string, callback: any) => {
     //rule：即为校验规则对象
     //value：即为表单元素文本内容
     //函数：如果符合条件cal1Back放行
