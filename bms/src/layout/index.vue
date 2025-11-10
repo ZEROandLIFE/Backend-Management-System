@@ -79,7 +79,9 @@
               <el-icon><SuitcaseLine /></el-icon>
               <span>商品管理</span>
             </template>
-            <el-menu-item index="/product/list">商品列表</el-menu-item>
+            <el-menu-item index="/products"
+              ><el-icon><Tickets /></el-icon>商品列表</el-menu-item
+            >
             <el-menu-item index="/product/category">商品分类</el-menu-item>
             <el-menu-item index="/brand"
               ><el-icon><Goods /></el-icon>品牌管理</el-menu-item
@@ -120,9 +122,10 @@
     ArrowDown,
     SwitchButton,
     Goods,
+    Tickets,
   } from "@element-plus/icons-vue";
   import { useUserStore } from "../store/modules/user";
-  import { useRouter } from "vue-router";
+  // import { useRouter } from "vue-router";
   import { ElButton } from "element-plus";
   const userStore = useUserStore();
   const $route = useRoute();
@@ -211,7 +214,7 @@
   };
 
   let useStore = useUserStore();
-  const router = useRouter();
+  // const router = useRouter();
 
   // 处理下拉菜单命令
   const handleCommand = (command: string) => {

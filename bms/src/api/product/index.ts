@@ -2,7 +2,6 @@ import request from "../../utils/request";
 import {
   type BrandRequest,
   type BrandResponse,
-  type Brand,
   type BrandListResponse,
 } from "./type";
 const apis = {
