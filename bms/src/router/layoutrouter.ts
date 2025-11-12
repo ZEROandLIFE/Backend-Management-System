@@ -5,6 +5,7 @@ import Role from "../views/acl/role/index.vue";
 import User from "../views/acl/user/index.vue";
 import Brand from "../views/product/brand/index.vue";
 import Products from "../views/product/products/index.vue";
+import ProductDetail from "../views/product/detail/index.vue";
 export const layoutrouter = [
   {
     path: "/home",
@@ -47,5 +48,12 @@ export const layoutrouter = [
     name: "products",
     component: Products,
     meta: { title: "商品列表" },
+  },
+  {
+    path: "/productdetail/:id?",
+    name: "productdetail",
+    component: ProductDetail,
+    meta: { title: "商品详情" },
+    props: true,
   },
 ];

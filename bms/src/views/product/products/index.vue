@@ -83,7 +83,6 @@
             <el-image
               style="width: 150px; height: 100px"
               :src="row.logo"
-              :preview-src-list="[row.logo]"
               fit="contain"
             />
           </template>
@@ -128,6 +127,9 @@
             >
             <el-button type="danger" size="small" @click="handleDelete(row)"
               ><el-icon><Delete /></el-icon>删除</el-button
+            >
+            <el-button type="primary" size="small" @click="handledetail(row)"
+              ><el-icon><Delete /></el-icon>查看商品详情</el-button
             >
           </template>
         </el-table-column>
@@ -207,6 +209,29 @@
           </el-select>
         </el-form-item>
 
+        <el-form-item label="背景介绍" prop="background">
+          <el-input
+            type="textarea"
+            :rows="3"
+            placeholder="请输入商品背景介绍，不少于50字"
+            v-model="newFormData.background"
+            show-word-limit
+            :maxlength="500"
+          />
+          <div class="form-tip">背景介绍用于简要描述商品特点和适用场景</div>
+        </el-form-item>
+
+        <el-form-item label="详细描述" prop="description">
+          <el-input
+            type="textarea"
+            :rows="5"
+            placeholder="请输入商品详细描述，不少于50字"
+            v-model="newFormData.description"
+            show-word-limit
+            :maxlength="1000"
+          />
+          <div class="form-tip">详细描述用于全面介绍商品功能、规格和优势</div>
+        </el-form-item>
         <el-form-item label="商品图片" prop="logo">
           <el-upload
             class="avatar-uploader"
@@ -235,6 +260,7 @@
   import { Plus, Delete, Edit, Search } from "@element-plus/icons-vue";
   import type { UploadProps, FormInstance, FormRules } from "element-plus";
   import { ElMessage, ElMessageBox } from "element-plus";
+  import { useRouter } from "vue-router";
   import {
     getAllProduct,
     deleteProduct,
@@ -251,6 +277,7 @@
   } from "../../../api/products/type";
 
   const userStore = useUserStore();
+  const router = useRouter();
   let currentPage = ref(1);
   let pageSize = ref(4);
   const productList = ref<Product[]>([]);
@@ -279,6 +306,8 @@
     stock: 0,
     tags: [],
     brand: "",
+    background: "",
+    description: "",
   });
 
   const formRules: FormRules = {
@@ -291,15 +320,31 @@
         trigger: "blur",
       },
     ],
-    brand: [{ required: true, message: "请选择品牌", trigger: "change" }],
+    brand: [{ required: true, message: "请选择品牌", trigger: "blur" }],
     stock: [
       { required: true, message: "请输入库存数量", trigger: "blur" },
       { type: "number", min: 0, message: "库存数量不能小于0", trigger: "blur" },
     ],
     tags: [
-      { required: true, message: "请至少选择一个标签", trigger: "change" },
+      { required: true, message: "请至少选择一个标签", trigger: "blur" },
     ],
     logo: [{ required: true, message: "请上传商品图片", trigger: "change" }],
+    background: [
+      { required: true, message: "请输入背景介绍", trigger: "blur" },
+      {
+        min: 50,
+        message: "背景介绍不能少于50字",
+        trigger: "blur",
+      },
+    ],
+    description: [
+      { required: true, message: "请输入详细描述", trigger: "blur" },
+      {
+        min: 50,
+        message: "详细描述不能少于50字",
+        trigger: "blur",
+      },
+    ],
   };
 
   // 计算当前页显示的数据
@@ -486,6 +531,8 @@
         stock: newFormData.stock,
         tags: newFormData.tags,
         brand: newFormData.brand,
+        background: newFormData.background,
+        description: newFormData.description,
       });
 
       if (res.code === 200) {
@@ -514,6 +561,8 @@
         stock: newFormData.stock,
         tags: newFormData.tags,
         brand: newFormData.brand,
+        background: newFormData.background,
+        description: newFormData.description,
       };
 
       const res = await updateProduct(editingId.value, updateData);
@@ -521,7 +570,6 @@
       if (res.code === 200) {
         ElMessage.success("更新成功!");
         dialogFormVisible.value = false;
-        resetForm();
         fetchProductList();
         handleResetSearch(); // 重置搜索状态
       } else {
@@ -546,6 +594,8 @@
     newFormData.stock = 0;
     newFormData.tags = [];
     newFormData.brand = "";
+    newFormData.background = "";
+    newFormData.description = "";
     imageUrl.value = "";
     operationType.value = 0;
     editingId.value = null;
@@ -566,6 +616,8 @@
     newFormData.stock = row.stock;
     newFormData.tags = [...row.tags];
     newFormData.brand = row.brand;
+    newFormData.background = row.background;
+    newFormData.description = row.description;
     imageUrl.value = row.logo;
   };
 
@@ -600,7 +652,9 @@
       }
     }
   };
-
+  const handledetail = (row: Product) => {
+    router.push(`/productdetail/${row.id}`);
+  };
   onMounted(() => {
     fetchProductList();
     fetchBrandList();

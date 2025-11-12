@@ -6,6 +6,8 @@ export interface Product {
   stock: number; // 剩余数量
   tags: string[]; // 标签数组
   brand: string; // 品牌
+  background: string; // 背景介绍
+  description: string; // 详细描述
 }
 
 // 商品列表响应数据类型
@@ -25,6 +27,8 @@ export interface AddProductRequest {
   stock: number; // 剩余数量
   tags: string[]; // 标签数组
   brand: string; // 品牌
+  background: string; // 背景介绍
+  description: string; // 详细描述
 }
 
 // 更新商品请求数据类型
@@ -34,6 +38,8 @@ export interface UpdateProductRequest {
   stock?: number; // 剩余数量
   tags?: string[]; // 标签数组
   brand?: string; // 品牌
+  background?: string; // 背景介绍
+  description?: string; // 详细描述
 }
 
 // 商品响应数据类型

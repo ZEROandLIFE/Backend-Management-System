@@ -43,7 +43,7 @@
       <aside class="sidebar" :style="{ width: sidebarWidth }">
         <el-menu
           class="sidebar-menu"
-          :default-active="$route.path"
+           :default-active="activeMenu"
           :class="currentTheme"
           :collapse="isCollapsed"
           router
@@ -79,12 +79,14 @@
               <el-icon><SuitcaseLine /></el-icon>
               <span>商品管理</span>
             </template>
+            <el-menu-item index="/brand"
+              ><el-icon><Goods /></el-icon>品牌管理</el-menu-item
+            >
             <el-menu-item index="/products"
               ><el-icon><Tickets /></el-icon>商品列表</el-menu-item
             >
-            <el-menu-item index="/product/category">商品分类</el-menu-item>
-            <el-menu-item index="/brand"
-              ><el-icon><Goods /></el-icon>品牌管理</el-menu-item
+            <el-menu-item index="/productdetail"
+              ><el-icon><Cellphone /></el-icon>商品详情</el-menu-item
             >
           </el-sub-menu>
         </el-menu>
@@ -122,13 +124,23 @@
     ArrowDown,
     SwitchButton,
     Goods,
-    Tickets,
+  Tickets,
+    Cellphone
   } from "@element-plus/icons-vue";
   import { useUserStore } from "../store/modules/user";
   // import { useRouter } from "vue-router";
   import { ElButton } from "element-plus";
   const userStore = useUserStore();
-  const $route = useRoute();
+  const route = useRoute(); 
+
+  // 计算当前激活的菜单
+  const activeMenu = computed(() => {
+    const { path } = route;
+    if (path.startsWith('/productdetail')) {
+      return '/productdetail';
+    }
+    return path;
+  });
 
   // 菜单折叠状态
   const isCollapsed = ref(false);
@@ -323,7 +335,7 @@
       border-radius: 4px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
-      height: 90%;
+      height: 95%;
       width: 95%;
     }
   }
