@@ -32,9 +32,7 @@
                 <el-icon><Search /></el-icon>
                 搜索
               </el-button>
-              <el-button v-if="isSearching" @click="handleResetSearch">
-                重置
-              </el-button>
+              <el-button @click="handleResetSearch"> 重置 </el-button>
             </div>
             <el-button
               :type="userStore.theme === 'dark' ? 'info' : 'primary'"
