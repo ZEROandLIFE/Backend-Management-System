@@ -59,7 +59,7 @@
           <el-sub-menu index="3">
             <template #title>
               <el-icon><Lock /></el-icon>
-              <span>权限管理</span>
+              <span>人员管理</span>
             </template>
             <el-menu-item index="/user">
               <el-icon><User /></el-icon>
@@ -68,10 +68,6 @@
             <el-menu-item index="/role">
               <el-icon><Avatar /></el-icon>
               <template #title>权限管理</template>
-            </el-menu-item>
-            <el-menu-item index="/permission">
-              <el-icon><Document /></el-icon>
-              <template #title>菜单管理</template>
             </el-menu-item>
           </el-sub-menu>
           <el-sub-menu index="4">
@@ -330,13 +326,13 @@
     transition: all 0.3s ease;
 
     .content {
-      padding: 20px;
-      margin: auto;
+      // padding: 20px;
+      // margin: auto;
       border-radius: 4px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
-      height: 95%;
-      width: 95%;
+      height: 100%;
+      width: 100%;
     }
   }
 

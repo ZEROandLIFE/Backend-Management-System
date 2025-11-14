@@ -1,6 +1,5 @@
 import Home from "../views/home/index.vue";
 import Screen from "../views/screen/index.vue";
-import Permission from "../views/acl/permission/index.vue";
 import Role from "../views/acl/role/index.vue";
 import User from "../views/acl/user/index.vue";
 import Brand from "../views/product/brand/index.vue";
@@ -24,12 +23,6 @@ export const layoutrouter = [
     name: "role",
     component: Role,
     meta: { title: "权限管理" },
-  },
-  {
-    path: "/permission",
-    name: "permission",
-    component: Permission,
-    meta: { title: "菜单管理" },
   },
   {
     path: "/user",

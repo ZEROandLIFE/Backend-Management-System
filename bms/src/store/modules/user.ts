@@ -50,7 +50,7 @@ export const useUserStore = defineStore("user", () => {
       localStorage.removeItem("userData");
       token.value = null;
       userData.value = null;
-
+      router.push("/login");
       ElMessage({
         type: "success",
         message: "退出登录成功",

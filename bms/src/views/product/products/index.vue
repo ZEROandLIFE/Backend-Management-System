@@ -150,7 +150,7 @@
     </el-card>
 
     <!-- 对话框 -->
-    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" width="50%">
+    <el-dialog :title="dialogTitle" v-model="dialogFormVisible" width="50%" :top="'5vh'">
       <el-form
         style="width: 90%; padding: 20px"
         :model="newFormData"
@@ -702,6 +702,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+
 
     :deep(.el-card__header) {
       border-bottom: none !important;

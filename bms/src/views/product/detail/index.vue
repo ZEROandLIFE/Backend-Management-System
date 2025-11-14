@@ -69,6 +69,14 @@
                     </el-tag>
                   </div>
                 </div>
+
+                <!-- 编辑按钮 -->
+                <div class="edit-section">
+                  <el-button type="primary" @click="handleEdit">
+                    <el-icon><Edit /></el-icon>
+                    编辑商品信息
+                  </el-button>
+                </div>
               </div>
             </el-col>
           </el-row>
@@ -99,24 +107,186 @@
           </div>
         </div>
       </el-card>
+
+      <!-- 编辑对话框 -->
+      <el-dialog :title="dialogTitle" v-model="dialogFormVisible" width="50%" :top="'5vh'">
+        <el-form
+          style="width: 90%; padding: 20px"
+          :model="editFormData"
+          ref="formRef"
+          :rules="formRules"
+          label-width="100px"
+        >
+          <el-form-item label="商品名称" prop="productName">
+            <el-input
+              placeholder="请输入商品名称"
+              clearable
+              v-model="editFormData.productName"
+            />
+          </el-form-item>
+
+          <el-form-item label="品牌" prop="brand">
+            <el-select
+              v-model="editFormData.brand"
+              placeholder="请选择品牌"
+              style="width: 100%"
+              clearable
+            >
+              <el-option
+                v-for="brand in brandList"
+                :key="brand"
+                :label="brand"
+                :value="brand"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="库存数量" prop="stock">
+            <el-input-number
+              v-model="editFormData.stock"
+              :min="0"
+              :max="9999"
+              placeholder="请输入库存数量"
+              style="width: 100%"
+            />
+          </el-form-item>
+
+          <el-form-item label="商品标签" prop="tags">
+            <el-select
+              v-model="editFormData.tags"
+              multiple
+              placeholder="请选择标签"
+              style="width: 100%"
+              clearable
+            >
+              <el-option
+                v-for="tag in tagList"
+                :key="tag"
+                :label="tag"
+                :value="tag"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="背景介绍" prop="background">
+            <el-input
+              type="textarea"
+              :rows="3"
+              placeholder="请输入商品背景介绍，不少于50字"
+              v-model="editFormData.background"
+              show-word-limit
+              :maxlength="500"
+            />
+            <div class="form-tip">背景介绍用于简要描述商品特点和适用场景</div>
+          </el-form-item>
+
+          <el-form-item label="详细描述" prop="description">
+            <el-input
+              type="textarea"
+              :rows="5"
+              placeholder="请输入商品详细描述，不少于50字"
+              v-model="editFormData.description"
+              show-word-limit
+              :maxlength="1000"
+            />
+            <div class="form-tip">详细描述用于全面介绍商品功能、规格和优势</div>
+          </el-form-item>
+
+          <el-form-item label="商品图片" prop="logo">
+            <el-upload
+              class="avatar-uploader"
+              :auto-upload="false"
+              :show-file-list="false"
+              :on-change="handleImageChange"
+              accept="image/*"
+            >
+              <img v-if="editImageUrl" :src="editImageUrl" class="avatar" />
+              <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+            </el-upload>
+            <div class="upload-tip">点击上传商品图片，建议尺寸 300x300px</div>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="cancelEdit">取消</el-button>
+          <el-button type="primary" @click="confirmEdit">确定</el-button>
+        </template>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRoute, useRouter } from "vue-router";
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, reactive } from 'vue'
 import { useProductStore } from "../../../store/modules/product";
-import { getProductById } from "../../../api/products";
-import type { Product } from "../../../api/products/type";
+import { getProductById, updateProduct, getBrands, getTags } from "../../../api/products";
+import type { Product, UpdateProductRequest } from "../../../api/products/type";
 import { ElMessage } from "element-plus";
-import { Goods } from "@element-plus/icons-vue";
+import { Goods, Edit, Plus } from "@element-plus/icons-vue";
+import type { UploadProps, FormInstance, FormRules } from "element-plus";
 
 const route = useRoute()
 const router = useRouter()
 const productStore = useProductStore()
 const loading = ref(false)
 const productDetail = ref<Product | null>(null)
+
+// 编辑相关状态
+const dialogFormVisible = ref(false)
+const dialogTitle = ref("编辑商品")
+const formRef = ref<FormInstance>()
+const editImageUrl = ref("")
+const brandList = ref<string[]>([])
+const tagList = ref<string[]>([])
+
+// 编辑表单数据
+const editFormData = reactive<UpdateProductRequest & { id?: number }>({
+  productName: "",
+  logo: "",
+  stock: 0,
+  tags: [],
+  brand: "",
+  background: "",
+  description: "",
+})
+
+// 表单验证规则
+const formRules: FormRules = {
+  productName: [
+    { required: true, message: "请输入商品名称", trigger: "blur" },
+    {
+      min: 1,
+      max: 50,
+      message: "商品名称长度在 1 到 50 个字符",
+      trigger: "blur",
+    },
+  ],
+  brand: [{ required: true, message: "请选择品牌", trigger: "blur" }],
+  stock: [
+    { required: true, message: "请输入库存数量", trigger: "blur" },
+    { type: "number", min: 0, message: "库存数量不能小于0", trigger: "blur" },
+  ],
+  tags: [
+    { required: true, message: "请至少选择一个标签", trigger: "blur" },
+  ],
+  logo: [{ required: true, message: "请上传商品图片", trigger: "change" }],
+  background: [
+    { required: true, message: "请输入背景介绍", trigger: "blur" },
+    {
+      min: 50,
+      message: "背景介绍不能少于50字",
+      trigger: "blur",
+    },
+  ],
+  description: [
+    { required: true, message: "请输入详细描述", trigger: "blur" },
+    {
+      min: 50,
+      message: "详细描述不能少于50字",
+      trigger: "blur",
+    },
+  ],
+}
 
 onMounted(async () => {
   const routeId = route.params.id
@@ -130,6 +300,10 @@ onMounted(async () => {
   if (productStore.currentProductId) {
     await fetchProductDetail(productStore.currentProductId)
   }
+
+  // 获取品牌和标签列表
+  await fetchBrandList()
+  await fetchTagList()
 })
 
 // 获取商品详情
@@ -148,6 +322,116 @@ const fetchProductDetail = async (id: number) => {
   } finally {
     loading.value = false
   }
+}
+
+// 获取品牌列表
+const fetchBrandList = async () => {
+  try {
+    const res = await getBrands()
+    if (res.code === 200) {
+      brandList.value = res.data
+    }
+  } catch (error) {
+    console.error('获取品牌列表失败:', error)
+  }
+}
+
+// 获取标签列表
+const fetchTagList = async () => {
+  try {
+    const res = await getTags()
+    if (res.code === 200) {
+      tagList.value = res.data
+    }
+  } catch (error) {
+    console.error('获取标签列表失败:', error)
+  }
+}
+
+// 编辑商品
+const handleEdit = () => {
+  if (!productDetail.value) return
+  
+  dialogFormVisible.value = true
+  // 填充当前商品数据到编辑表单
+  editFormData.productName = productDetail.value.productName
+  editFormData.logo = productDetail.value.logo
+  editFormData.stock = productDetail.value.stock
+  editFormData.tags = [...productDetail.value.tags]
+  editFormData.brand = productDetail.value.brand
+  editFormData.background = productDetail.value.background
+  editFormData.description = productDetail.value.description
+  editImageUrl.value = productDetail.value.logo
+}
+
+// 确认编辑
+const confirmEdit = async () => {
+  if (!formRef.value) return
+  try {
+    await formRef.value.validate()
+
+    if (!productStore.currentProductId) return
+
+    const updateData: UpdateProductRequest = {
+      productName: editFormData.productName,
+      logo: editFormData.logo,
+      stock: editFormData.stock,
+      tags: editFormData.tags,
+      brand: editFormData.brand,
+      background: editFormData.background,
+      description: editFormData.description,
+    }
+
+    const res = await updateProduct(productStore.currentProductId, updateData)
+
+    if (res.code === 200) {
+      ElMessage.success("更新成功!")
+      dialogFormVisible.value = false
+      // 重新获取商品详情以更新显示
+      await fetchProductDetail(productStore.currentProductId)
+    } else {
+      ElMessage.error(`更新失败: ${res.message}`)
+    }
+  } catch (error) {
+    ElMessage.error("请填写完整的表单信息!")
+  }
+}
+
+// 取消编辑
+const cancelEdit = () => {
+  dialogFormVisible.value = false
+  resetEditForm()
+}
+
+// 重置编辑表单
+const resetEditForm = () => {
+  editFormData.productName = ""
+  editFormData.logo = ""
+  editFormData.stock = 0
+  editFormData.tags = []
+  editFormData.brand = ""
+  editFormData.background = ""
+  editFormData.description = ""
+  editImageUrl.value = ""
+}
+
+// 处理图片选择
+const handleImageChange: UploadProps["onChange"] = (file) => {
+  const isImage = file.raw?.type.startsWith("image/")
+  if (!isImage) {
+    ElMessage.error("请上传图片文件!")
+    return
+  }
+
+  const isLt2M = file.raw!.size / 1024 / 1024 < 2
+  if (!isLt2M) {
+    ElMessage.error("图片大小不能超过 2MB!")
+    return
+  }
+
+  editImageUrl.value = URL.createObjectURL(file.raw!)
+  editFormData.logo = `https://example.com/upload/${file.name}`
+  ElMessage.primary("这里我们使用一个示例URL，因为没有真实服务器")
 }
 
 // 前往商品列表
@@ -264,6 +548,13 @@ const goToProductList = () => {
   margin-bottom: 8px;
 }
 
+/* 编辑按钮区域 */
+.edit-section {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e4e7ed;
+}
+
 .content-section {
   margin-bottom: 30px;
 }
@@ -303,13 +594,59 @@ const goToProductList = () => {
     }
   }
 }
-/* 修改普通标签样式 */
+
 .tags-container,.info-item {
   .el-tag {
-    font-size: 14px; /* 调整普通标签字体大小 */
+    font-size: 14px;
     padding: 0 10px;
     height: 28px;
     line-height: 28px;
   }
+}
+
+/* 对话框样式 */
+.form-tip {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #909399;
+}
+
+.upload-tip {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #909399;
+}
+
+.avatar-uploader .avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+  object-fit: cover;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+}
+
+.avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
